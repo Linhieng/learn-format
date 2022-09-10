@@ -1,0 +1,146 @@
+# 配置参考自 https://github.com/torvalds/linux/blob/master/.clang-format
+# 前面是自己的配置, 后面是 linux 大佬的一些配置(删除了 `ForEachMacros` ).
+---
+# 自己看得懂的配置, 后面的 # 代表 linux 大佬的配置
+# 缩进宽度
+IndentWidth: 8
+# "line continuations" 的缩进量, 想要函数参数能够多行, 最好第一个参数也换行
+ContinuationIndentWidth: 4 # 8
+# case 与 switch 缩进
+IndentCaseLabels: true # false
+# 限制行宽度, 0 代表不限制
+ColumnLimit: 0 # 80
+# 三元运算符的 ? : 是否要在前面. 不一定生效, 因为三元运算符会被缩成一行
+BreakBeforeTernaryOperators: true # false
+# 允许的最大连续空行
+MaxEmptyLinesToKeep: 10 # 1
+# 保留块开始处的空行
+KeepEmptyLinesAtTheStartOfBlocks: true # false
+
+# 括号换行时, 右括号单独一行
+AlignAfterOpenBracket: BlockIndent # Align
+# 多行同时赋值时, 对齐 = 号
+AlignConsecutiveAssignments: Consecutive # false
+
+# 操作符的对齐方式
+AlignOperands: AlignAfterOperator # true 好像没啥区别
+# 换行时操作符在前(All)或者在后(None)
+BreakBeforeBinaryOperators: All # None
+
+# 对齐尾随的注释
+AlignTrailingComments: true # false
+# 尾随注释前的空格数, 即 `//` 前至少会有的空格数
+SpacesBeforeTrailingComments: 1
+
+# 让 BraceWrapping 生效
+BreakBeforeBraces: Custom
+# 配置花括号在哪里换行, 是否换行
+BraceWrapping:
+  AfterCaseLabel: false # linux 没配置
+  AfterControlStatement: false # 好像和 Never 差不多
+  AfterClass: false
+  AfterEnum: false
+  AfterFunction: false # true
+  AfterNamespace: false # true
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+#
+
+SpaceBeforeParens: Custom # ControlStatementsExceptForEachMacros
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterFunctionDefinitionName: true
+  AfterFunctionDeclarationName: false
+  AfterIfMacros: true
+  AfterOverloadedOperator: true
+  BeforeNonEmptyParentheses: false
+#
+
+# ===================================================
+# ===================================================
+# ================== 不了解的配置 =====================
+# ===================================================
+# ===================================================
+
+AccessModifierOffset: -4
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: Left
+AllowAllParametersOfDeclarationOnNextLine: false # 了解了一下, 好像因为 AlignAfterOpenBracket: BlockIndent 的原因, 这个基本无效
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: false
+BinPackArguments: true
+BinPackParameters: true # 了解了一下, 好像因为 AlignAfterOpenBracket: BlockIndent 的原因, 这个基本无效
+BreakBeforeInheritanceComma: false
+BreakConstructorInitializersBeforeComma: false
+BreakConstructorInitializers: BeforeComma
+BreakAfterJavaFieldAnnotations: false
+BreakStringLiterals: false
+CommentPragmas: '^ IWYU pragma:'
+CompactNamespaces: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerIndentWidth: 8
+Cpp11BracedListStyle: false
+DerivePointerAlignment: false
+DisableFormat: false
+ExperimentalAutoDetectBinPacking: false
+FixNamespaceComments: false
+
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '.*'
+    Priority: 1
+IncludeIsMainRegex: '(Test)?$'
+IndentGotoLabels: false
+IndentPPDirectives: None
+IndentWrappedFunctionNames: false
+JavaScriptQuotes: Leave
+JavaScriptWrapImports: true
+MacroBlockBegin: ''
+MacroBlockEnd: ''
+NamespaceIndentation: None
+ObjCBinPackProtocolList: Auto
+ObjCBlockIndentWidth: 8
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+
+PenaltyBreakAssignment: 10
+PenaltyBreakBeforeFirstCallParameter: 30
+PenaltyBreakComment: 10
+PenaltyBreakFirstLessLess: 0
+PenaltyBreakString: 10
+PenaltyExcessCharacter: 100
+PenaltyReturnTypeOnItsOwnLine: 60
+
+PointerAlignment: Right # 指针的 * 贴近右边
+ReflowComments: false
+SortIncludes: false
+SortUsingDeclarations: false
+SpaceAfterTemplateKeyword: true
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyParentheses: false
+SpacesInAngles: false
+SpacesInContainerLiterals: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false # 括号内部两侧是否要加空格
+SpacesInSquareBrackets: false
+Standard: Cpp03
+# ...

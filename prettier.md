@@ -1,4 +1,12 @@
-## 参考
+## 🍕 我的想法
+
+[官网](https://prettier.io/docs/en/options.html)提供的配置项太少了.
+
+但主要的原因还是 `prettier` 管的东西太多了, 某一些格式化我无法关闭它, 最终我还是选择不使用 prettier.
+
+下面的这些, 是在使用过程中积累的配置项, 就留着吧.
+
+## 🍕 参考
 
 > [官方文档](https://prettier.io/docs/en/install.html)
 >
@@ -27,12 +35,6 @@ module.exports = {
 
 > `package.json` 和是否可以格式化, 没啥影响,
 > 不安装 `prettier` 包也可以格式化.
-
-## 🍕 我的想法
-
-[官网](https://prettier.io/docs/en/options.html)提供的配置项甚至比 `setting.json` 中的还少.
-
-配置项太少, `prettier` 管的东西太多了, 而且还无法关闭它, 最终我还是选择不使用它.
 
 ## 🍕 配置项
 

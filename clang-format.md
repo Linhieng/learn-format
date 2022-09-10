@@ -3,6 +3,12 @@
 [最新官方文档](https://clang.llvm.org/docs/index.html)
 [v14版本文档](https://releases.llvm.org/14.0.0/tools/clang/docs/index.html)
 
+**说在前头** clang-format 的配置, 不是简单的, 配置了就一定会生效的,
+每一个配置项都不是孤立的, 他们之间会互相影响,
+所以直接测试单个配置项, 很多时候可能会是无效的.
+下面的这些配置项, 只是给出了该配置项的作用,
+但实际效果还是得看具体的 `.clang-format` 文件
+
 ## 🍕 基本使用
 
 - vscode 基础配置信息:
@@ -30,6 +36,11 @@
 
   如果配置文件格式不正确, 或者乱写, 则会导致格式化出错, 比如下面这几种情况:
 
+  **补充:** 准确的来说, 下面这些写法, 不一定是错误的, 可能是因为 vscode 的原因或者其他说明原因而导致错误.
+  因为 linux 大佬的 `.clang-format` 直接复制来用的时候, 就会报错.
+
+  > 附上 linux 的格式化[配置参考](https://github.com/torvalds/linux/blob/master/.clang-format)
+
   ```yaml
   AlignConsecutiveStyle: Consecutive # 暂时不清楚为什么会错
   ```
@@ -42,7 +53,7 @@
 
   ```yaml
   IndentWidth: 4
-  ... # 多余的
+  ... # # 暂时不清楚为什么会错
   ```
 
 - 在代码中使用注释来开启/关闭格式化:
@@ -70,7 +81,10 @@
 
 - `DisableFormat: false` 是否关闭格式化
 - `MaxEmptyLinesToKeep: 10` 允许的最大连续空行
+- `KeepEmptyLinesAtTheStartOfBlocks: true` 保留块开始处的空行. 块: 即作用域块, 一般由 {} 包裹
 - `BreakBeforeBraces: Custom` 让 `BraceWrapping` 配置项生效
+
+- `SpacesInParentheses: true` 括号内部两侧是否要加空格.
 
 ## 🍕 积累的配置解释项(需解释)
 
@@ -85,6 +99,8 @@
 - `NonAssignment` 赋值型的相当于 `None`, 计算型的相当于 `All`
 
 ### AlignOperands
+
+> 它的值还可以是 `true` 官网的解释是 **If true, horizontally align operands of binary and ternary expressions.** 暂时搞不懂为什么可以是 `true`, 也可以是下面的值.
 
 定义 "操作符" 的对齐方式. 搭配 `BreakBeforeBinaryOperators` 使用
 
@@ -140,7 +156,7 @@ BraceWrapping:
 
 - `AfterControlStatement`:
 
-  > control statement: `if` / `for` / `while` / `switch` /..
+  > **control statement**: `if` / `for` / `while` / `switch` /..
 
   - `Never`: `{` 永远不换行
   - `Always`: `{` 永远用于换行
@@ -168,6 +184,133 @@ BraceWrapping:
       argument1, argument2
   )
   ```
+
+### ContinuationIndentWidth
+
+控制连续的语句的缩进宽度, 直接解释有点难解释, 看例子比较方便:
+
+- 案例1
+
+  ```c
+  // IndentWidth: 8
+  // ContinuationIndentWidth: 2
+  int isLeapYear(int year) {
+          return (
+            (
+              year % 4 == 0
+              && year % 100 != 0
+            )
+            || (year % 400) == 0
+          );
+  }
+  ```
+
+  缩进默认是 8, `return` 语句就是 **line continuations**,
+  当我们将他们换行时, 他们的缩进是 2, 这就是 `ContinuationIndentWidth` 控制的缩进
+
+- 案例2
+
+  有关系的配置(核心):
+  ```yaml
+  ColumnLimit: 0 #　下面的配置能够生效都是因为这里设置了 0, 即不限制宽度
+  AlignAfterOpenBracket: BlockIndent
+  ContinuationIndentWidth: 8
+  ```
+
+  ```c
+  void f1(int a, // 因为 `void f1(` 小于 ContinuationIndentWidth, 所以程序能够理解你是要垂直对齐.
+          int b, // 当然, 如果你不是手动分行的话, 程序会认为你要水平放置
+          int c) {
+  }
+  void f22(int a, int b, int c) {
+           // 因为 `void f22(` 这个宽度已经大于等于 ContinuationIndentWidth 的值,
+           // 所以 三个形参会被合并到一行
+  }
+
+  void f33(
+          int a, // 因为把第一个形参放到了新的一行, 这样的话, 就不会考虑 `void f33(` 的宽度了,
+                 // 程序会始终按照 ContinuationIndentWidth 的值对形参进行缩进
+          int b,
+          int c
+  ) { // 这个括号能够在新的一行, 而不会贴在 int c 后面, 是因为有 AlignAfterOpenBracket: BlockIndent
+  }
+  ```
+
+  这个格式化, 解释起来还是挺困难的, 只能 "意会",
+  因为一个配置会因为其他的配置, 而产生出不一样的格式化效果.
+
+  所以直接复制上面的配置, 想要测试的时候, 有时候总会失败,
+  就是因为配置与配置之间会互相影响
+
+### AlignConsecutiveAssignments
+
+解释起来太麻烦了, 直接看例子吧, 后面的如果解释不清就不做说明了, 直接给出例子.
+
+- `None`
+- `Consecutive`
+
+  ```c
+  int a            = 1;
+  int somelongname = 2;
+  double c         = 3;
+
+  int d = 3;
+  /* A comment. */
+  double e = 4;
+  ```
+
+- `AcrossEmptyLines`
+
+  ```c
+  int a            = 1;
+  int somelongname = 2;
+  double c         = 3;
+
+  int d            = 3;
+  /* A comment. */
+  double e = 4;
+  ```
+
+- `AcrossComments`
+
+  ```c
+  int a            = 1;
+  int somelongname = 2;
+  double c         = 3;
+
+  int d    = 3;
+  /* A comment. */
+  double e = 4;
+  ```
+
+- `AcrossEmptyLinesAndComments`
+
+  ```c
+  int a            = 1;
+  int somelongname = 2;
+  double c         = 3;
+
+  int d            = 3;
+  /* A comment. */
+  double e         = 4;
+  ```
+
+### SpaceBeforeParensOptions
+
+这是一个配置组, 配置括号前方是否要有空格
+
+想生效, 需要 `SpaceBeforeParens: Custom`.
+
+可配置项如下:
+
+- `AfterControlStatements` 配置 **control statement** (`if` / `for` / `while` / `switch` /..) 的前方是否要有空格, `true` 则代表带上空格
+- `AfterFunctionDefinitionName` 同上, 只不过 control statement 换成了函数定义, 比如 `void fn() {}`
+- `AfterFunctionDeclarationName` 同上, 这次是函数声明, 比如 `void fn();`
+- `AfterIfMacros` 同上, 这次是 IF 宏
+- `AfterOverloadedOperator` 同上, Overloaded Operator 不懂是啥, 形式是: `void operator++ (int a);` 和 `object.operator++ (10);`
+- `BeforeNonEmptyParentheses` 同上, 这个是调用函数时是否带上空格, 一般不带.
+
+###
 
 ## 🍕 配置参考文档
 
